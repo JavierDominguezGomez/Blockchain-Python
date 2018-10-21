@@ -1,9 +1,15 @@
 from uuid import uuid4
 
 from blockchain import Blockchain
-from verification import Verification
+from utility.verification import Verification
 
 class Node:
+    """The node which runs the local blockchain instance.
+    
+    Attributes:
+        :id: The id of the node.
+        :blockchain: The blockchain which is run by this node.
+    """
     def __init__(self):
         # self.id = str(uuid4())
         self.id = 'MAX'
@@ -16,12 +22,10 @@ class Node:
         tx_amount = float(input('Your transaction amount please: '))
         return tx_recipient, tx_amount
 
-
     def get_user_choice(self):
         """Prompts the user for its choice and return it."""
         user_input = input('Your choice: ')
         return user_input
-
 
     def print_blockchain_elements(self):
         """ Output all blocks of the blockchain. """
@@ -32,8 +36,8 @@ class Node:
         else:
             print('-' * 20)
 
-
     def listen_for_input(self):
+        """Starts the node and waits for user input."""
         waiting_for_input = True
 
         # A while loop for the user input interface
@@ -60,7 +64,7 @@ class Node:
             elif user_choice == '3':
                 self.print_blockchain_elements()
             elif user_choice == '4':
-                if Verification.verify_transactions(self.blockchain.get_open_transactions(), self.blockchain.get_balance()):
+                if Verification.verify_transactions(self.blockchain.get_open_transactions(), self.blockchain.get_balance):
                     print('All transactions are valid')
                 else:
                     print('There are invalid transactions')
