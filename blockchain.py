@@ -13,7 +13,6 @@ from transaction import Transaction
 # The reward we give to miners (for creating a new block)
 MINING_REWARD = 10
 
-
 class Blockchain:
     """The Blockchain class manages the chain of blocks as well as open transactions and the node on which it's running.
     
