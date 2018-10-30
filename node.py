@@ -12,9 +12,9 @@ class Node:
         :blockchain: The blockchain which is run by this node.
     """
     def __init__(self):
-        # self.wallet.public_key = str(uuid4())
+        # self.id = str(uuid4())
         self.wallet = Wallet()
-        self.blockchain = None
+        self.wallet.create_keys()
         self.blockchain = Blockchain(self.wallet.public_key)
 
     def get_transaction_value(self):
