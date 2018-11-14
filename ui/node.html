@@ -197,46 +197,10 @@
             el: '#app',
             data: {
                 blockchain: [
-                    {
-                        previous_hash: 'fawsqwar2', index: 0, transactions: [
-                            {
-                                sender: 'fsdf23',
-                                recipient: 'fadwfs314',
-                                amount: 5.5
-                            },
-                            {
-                                sender: 'fssfsddf23',
-                                recipient: 'fadewasfwfs314',
-                                amount: 15.5
-                            }
-                        ]
-                    },
-                    {
-                        previous_hash: 'awdsf14', index: 1, transactions: [
-                            {
-                                sender: 'afe',
-                                recipient: 'fadwe322fs314',
-                                amount: 1.5
-                            },
-                            {
-                                sender: 'fssddf23',
-                                recipient: 'fadesfwfs314',
-                                amount: 4.5
-                            }
-                        ]
-                    }
+                    
                 ],
                 openTransactions: [
-                    {
-                        sender: '23r32r3fsas',
-                        recipient: 'feadsf25',
-                        amount: 5.9
-                    },
-                    {
-                        sender: '23r23r2ra3fsas',
-                        recipient: 'sdfsfa',
-                        amount: 1.5
-                    }
+                    
                 ],
                 wallet: null,
                 view: 'chain',
@@ -310,20 +274,13 @@
                 onLoadData: function () {
                     if (this.view === 'chain') {
                         // Load blockchain data
-                        if (Math.random() > 0.5) {
-                            this.error = null
-                        } else {
-                            this.success = null;
-                            this.error = 'Something went wrong!'
-                        }
+                        axios.get('/chain')
+                            .then(function (response) {
+                                console.log(response)
+                            })
                     } else {
                         // Load transaction data
-                        if (Math.random() > 0.5) {
-                            this.error = null
-                        } else {
-                            this.success = null;
-                            this.error = 'Something went wrong!'
-                        }
+                        
                     }
                 }
             }
