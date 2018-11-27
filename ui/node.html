@@ -301,7 +301,7 @@
                     });
                 },
                 onMine: function () {
-                    var vm = this;
+                    var vm = this
                     axios.post('/mine')
                         .then(function(response) {
                             vm.error = null;
