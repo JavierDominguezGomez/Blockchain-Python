@@ -7,6 +7,7 @@ from blockchain import Blockchain
 app = Flask(__name__)
 CORS(app)
 
+
 @app.route('/', methods=['GET'])
 def get_node_ui():
     return send_from_directory('ui', 'node.html')
@@ -20,7 +21,7 @@ def get_network_ui():
 @app.route('/wallet', methods=['POST'])
 def create_keys():
     wallet.create_keys()
-    if wallet.save_keys(): 
+    if wallet.save_keys():
         global blockchain
         blockchain = Blockchain(wallet.public_key, port)
         response = {
@@ -116,11 +117,11 @@ def broadcast_block():
             response = {'message': 'Block added'}
             return jsonify(response), 201
         else:
-            response = {'message': 'Block seems invalid'}
+            response = {'message': 'Block seems invalid.'}
             return jsonify(response), 500
     elif block['index'] > blockchain.chain[-1].index:
         pass
-    else:
+    else: 
         response = {'message': 'Blockchain seems to be shorter, block not added'}
         return jsonify(response), 409
 
@@ -147,7 +148,8 @@ def add_transaction():
     recipient = values['recipient']
     amount = values['amount']
     signature = wallet.sign_transaction(wallet.public_key, recipient, amount)
-    success = blockchain.add_transaction(recipient, wallet.public_key, signature, amount)
+    success = blockchain.add_transaction(
+        recipient, wallet.public_key, signature, amount)
     if success:
         response = {
             'message': 'Successfully added transaction.',
@@ -249,6 +251,7 @@ def get_nodes():
         'all_nodes': nodes
     }
     return jsonify(response), 200
+
 
 if __name__ == '__main__':
     from argparse import ArgumentParser
