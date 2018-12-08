@@ -109,12 +109,11 @@ class Blockchain:
                 saveable_chain = [
                     block.__dict__ for block in
                     [
-                        Block(
-                            block_el.index,
-                            block_el.previous_hash,
-                            [tx.__dict__ for tx in block_el.transactions],
-                            block_el.proof,
-                            block_el.timestamp) for block_el in self.__chain
+                        Block(block_el.index,
+                              block_el.previous_hash,
+                              [tx.__dict__ for tx in block_el.transactions],
+                              block_el.proof,
+                              block_el.timestamp) for block_el in self.__chain
                     ]
                 ]
                 f.write(json.dumps(saveable_chain))
@@ -140,8 +139,7 @@ class Blockchain:
         # Try different PoW numbers and return the first valid one
         while not Verification.valid_proof(
             self.__open_transactions,
-            last_hash,
-            proof
+            last_hash, proof
         ):
             proof += 1
         return proof
@@ -166,8 +164,8 @@ class Blockchain:
         # This fetches sent amounts of open transactions (to avoid double
         # spending)
         open_tx_sender = [
-            tx.amount
-            for tx in self.__open_transactions if tx.sender is participant
+            tx.amount for tx in self.__open_transactions
+            if tx.sender == participant
         ]
         tx_sender.append(open_tx_sender)
         print(tx_sender)
@@ -176,17 +174,20 @@ class Blockchain:
         # This fetches received coin amounts of transactions that were already
         # included in blocks of the blockchain
         # We ignore open transactions here because you shouldn't be able to
-        # spend coins before the transaction was confirmed + included in
-        # a block
+        # spend coins before the transaction was confirmed + included in a
+        # block
         tx_recipient = [
             [
-                tx.amount
-                for tx in block.transactions
-                if tx.recipient == participant] for block in self.__chain
+                tx.amount for tx in block.transactions
+                if tx.recipient == participant
+            ] for block in self.__chain
         ]
-        amount_received = reduce(lambda tx_sum, tx_amt: tx_sum + sum(tx_amt)
-                                 if len(tx_amt) > 0
-                                 else tx_sum + 0, tx_recipient, 0)
+        amount_received = reduce(
+            lambda tx_sum, tx_amt: tx_sum + sum(tx_amt)
+            if len(tx_amt) > 0 else tx_sum + 0,
+            tx_recipient,
+            0
+        )
         # Return the total balance
         return amount_received - amount_sent
 
@@ -201,21 +202,19 @@ class Blockchain:
     # (last_transaction)
     # The optional one is optional because it has a default value => [1]
 
-    def add_transaction(
-        self,
-        recipient,
-        sender,
-        signature,
-        amount=1.0,
-        is_receiving=False
-    ):
+    def add_transaction(self,
+                        recipient,
+                        sender,
+                        signature,
+                        amount=1.0,
+                        is_receiving=False):
         """ Append a new value as well as the last blockchain value to the blockchain.
 
         Arguments:
-            :sender:    The sender of the coins.
+            :sender: The sender of the coins.
             :recipient: The recipient of the coins.
-            :amount:    The amount of coins sent with the transaction
-                        (default = 1.0)
+            :amount: The amount of coins sent with the transaction
+            (default = 1.0)
         """
         # transaction = {
         #     'sender': sender,
@@ -234,10 +233,11 @@ class Blockchain:
                     try:
                         response = requests.post(url,
                                                  json={
-                                                    'sender': sender,
-                                                    'recipient': recipient,
-                                                    'amount': amount,
-                                                    'signature': signature})
+                                                     'sender': sender,
+                                                     'recipient': recipient,
+                                                     'amount': amount,
+                                                     'signature': signature
+                                                 })
                         if (response.status_code == 400 or
                                 response.status_code == 500):
                             print('Transaction declined, needs resolving')
@@ -253,8 +253,8 @@ class Blockchain:
         if self.public_key is None:
             return None
         last_block = self.__chain[-1]
-        # Hash the last block (=> to be able to compare it to the stored
-        # hash value)
+        # Hash the last block (=> to be able to compare it to the stored hash
+        # value)
         hashed_block = hash_block(last_block)
         proof = self.proof_of_work()
         # Miners should be rewarded, so let's create a reward transaction
@@ -266,9 +266,9 @@ class Blockchain:
         reward_transaction = Transaction(
             'MINING', self.public_key, '', MINING_REWARD)
         # Copy transaction instead of manipulating the original
-        # open_transactions list.
-        # This ensures that if for some reason the mining should fail, we
-        # don't have the reward transaction stored in the open transactions
+        # open_transactions list
+        # This ensures that if for some reason the mining should fail,
+        # we don't have the reward transaction stored in the open transactions
         copied_transactions = self.__open_transactions[:]
         for tx in copied_transactions:
             if not Wallet.verify_transaction(tx):
@@ -295,12 +295,14 @@ class Blockchain:
         return block
 
     def add_block(self, block):
-        """Add a block which was received via broadcasting to the local
-        blockchain."""
+        """Add a block which was received via broadcasting to the localb
+        lockchain."""
         # Create a list of transaction objects
         transactions = [Transaction(
-            tx['sender'], tx['recipient'], tx['signature'], tx['amount'])
-            for tx in block['transactions']]
+            tx['sender'],
+            tx['recipient'],
+            tx['signature'],
+            tx['amount']) for tx in block['transactions']]
         # Validate the proof of work of the block and store the result (True
         # or False) in a variable
         proof_is_valid = Verification.valid_proof(
@@ -351,17 +353,19 @@ class Blockchain:
                 node_chain = response.json()
                 # Convert the dictionary list to a list of block AND
                 # transaction objects
-                node_chain = [Block(
-                    block['index'],
-                    block['previous_hash'],
-                    [Transaction(
-                        tx['sender'],
-                        tx['recipient'],
-                        tx['signature'],
-                        tx['amount'])
-                        for tx in block['transactions']],
-                    block['proof'], block['timestamp'])
-                    for block in node_chain]
+                node_chain = [
+                    Block(block['index'],
+                          block['previous_hash'],
+                          [
+                        Transaction(
+                            tx['sender'],
+                            tx['recipient'],
+                            tx['signature'],
+                            tx['amount']) for tx in block['transactions']
+                    ],
+                        block['proof'],
+                        block['timestamp']) for block in node_chain
+                ]
                 node_chain_length = len(node_chain)
                 local_chain_length = len(winner_chain)
                 # Store the received chain as the current winner chain if it's
