@@ -16,3 +16,7 @@ file.close()
 myList0 = ['Dennis', 'Ken', 'Richard']
 myList1 = [3, 5, 27]
 myList2 = ['Hola', 3.14, True, ['Otra lista!', False, 3]]
+
+myList = [1, 3, 27]
+myList.append(9)
+myList.pop()
