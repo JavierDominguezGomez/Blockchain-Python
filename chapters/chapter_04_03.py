@@ -8,6 +8,10 @@ open_transactions = []
 owner = 'Satoshi'
 
 
+def hash_block(block):
+    return '-'.join([str(block[key]) for key in block])
+
+
 def get_last_blockchain_value():
     if len(blockchain) < 1:
         return None
@@ -25,7 +29,7 @@ def add_transaction(recipient, sender=owner, amount=1.0):
 
 def mine_block():
     last_block = blockchain[-1]
-    hashed_block = '-'.join([str(last_block[key]) for key in last_block])
+    hashed_block = hash_block(last_block)
     print(hashed_block)
     block = {
         'previous_hash': hashed_block,
@@ -53,16 +57,12 @@ def print_blockchain_elements():
 
 
 def verify_chain():
-    is_valid = True
-    for block_index in range(len(blockchain)):
-        if block_index == 0:
+    for (index, block) in enumerate(blockchain):
+        if index == 0:
             continue
-        elif blockchain[block_index][0] == blockchain[block_index - 1]:
-            is_valid = True
-        else:
-            is_valid = False
-            break
-    return is_valid
+        if block['previous_hash'] == hash_block(blockchain[index - 1]):
+            return False
+    return True
 
 waiting_for_input = True
 
