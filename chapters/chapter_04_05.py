@@ -125,7 +125,7 @@ while waiting_for_input:
         print_blockchain_elements()
         print('Invalid blockchain!')
         break
-    print(get_balance(owner))
+    print('Balance of {}: {:6.2f}'.format(owner, get_balance(owner)))
 else:
     print('User left!')
 
