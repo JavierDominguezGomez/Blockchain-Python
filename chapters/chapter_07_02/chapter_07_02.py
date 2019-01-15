@@ -1,7 +1,6 @@
 from functools import reduce
 import hashlib
 import json
-from collections import OrderedDict
 from block import Block
 from transaction import Transaction
 
@@ -57,7 +56,13 @@ load_data()
 def save_data():
     try:
         with open('blockchain.txt', mode='w') as f:
-            saveable_chain = [block.__dict__ for block in blockchain]
+            saveable_chain = [block.__dict__ for block in [Block(
+                block_element.index,
+                block_element.previous_hash,
+                [tx.__dict__ for tx in block_element.transactions],
+                block_element.proof,
+                block_element.timestamp
+            ) for block_element in blockchain]]
             f.write(json.dumps(saveable_chain))
             f.write('\n')
             saveable_tx = [tx.__dict__ for tx in open_transactions]
@@ -68,6 +73,8 @@ def save_data():
 
 def hash_block(block):
     hashable_block = block.__dict__.copy()
+    hashable_block['transactions'] = [tx.to_ordered_dict()
+                                      for tx in hashable_block['transactions']]
     return hashlib.sha256(
         json.dumps(hashable_block, sort_keys=True).encode()
     ).hexdigest()
@@ -123,11 +130,7 @@ def verify_transaction(transaction):
 
 
 def add_transaction(recipient, sender=owner, amount=1.0):
-    transaction = OrderedDict([
-        ('sender', sender),
-        ('recipient', recipient),
-        ('amount', amount)
-    ])
+    transaction = Transaction(sender, recipient, amount)
     if verify_transaction(transaction):
         open_transactions.append(transaction)
         participants.add(sender)
@@ -141,11 +144,7 @@ def mine_block():
     last_block = blockchain[-1]
     hashed_block = hash_block(last_block)
     proof = proof_of_work()
-    reward_transaction = OrderedDict([
-        ('sender', 'MINING'),
-        ('recipient', owner),
-        ('amount', MINING_REWARD)
-    ])
+    reward_transaction = Transaction('MINING', owner, MINING_REWARD)
     copied_transactions = open_transactions[:]
     copied_transactions.append(reward_transaction)
     block = Block(len(blockchain), hashed_block, copied_transactions, proof)
