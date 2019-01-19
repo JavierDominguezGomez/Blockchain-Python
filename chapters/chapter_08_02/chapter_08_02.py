@@ -1,5 +1,5 @@
 from functools import reduce
-import hashlib
+from hash_util import hash_string_256, hash_block
 import json
 from block import Block
 from transaction import Transaction
@@ -71,20 +71,11 @@ def save_data():
         print('Saving failed!')
 
 
-def hash_block(block):
-    hashable_block = block.__dict__.copy()
-    hashable_block['transactions'] = [tx.to_ordered_dict()
-                                      for tx in hashable_block['transactions']]
-    return hashlib.sha256(
-        json.dumps(hashable_block, sort_keys=True).encode()
-    ).hexdigest()
-
-
 def valid_proof(transactions, last_hash, proof):
     guess = (str([tx.to_ordered_dict() for tx in transactions]) +
              str(last_hash) +
              str(proof)).encode()
-    guess_hash = hashlib.sha256(guess).hexdigest()
+    guess_hash = hash_string_256(guess)
     return guess_hash[0:2] == '00'
 
 
