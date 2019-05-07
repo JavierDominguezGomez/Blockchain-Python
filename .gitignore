@@ -1,8 +1,7 @@
-
-# Created by https://www.gitignore.io/api/vim,emacs,linux,macos,windows,eclipse,sublimetext,visualstudiocode
+blockchain.txt
+blockchain.dat
 
 ### Eclipse ###
-
 .metadata
 bin/
 tmp/
@@ -118,7 +117,7 @@ flycheck_*.el
 # directory configuration
 .dir-locals.el
 
-### Linux ###
+### GNU/Linux ###
 
 # temporary files which can be created if a process still has a handle open of a deleted file
 .fuse_hidden*
@@ -126,7 +125,7 @@ flycheck_*.el
 # KDE directory preferences
 .directory
 
-# Linux trash folder which might appear on any partition or disk
+# GNU/Linux trash folder which might appear on any partition or disk
 .Trash-*
 
 # .nfs files are created when an open file is removed but is still being accessed
@@ -241,6 +240,3 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
-
-
-# End of https://www.gitignore.io/api/vim,emacs,linux,macos,windows,eclipse,sublimetext,visualstudiocode
